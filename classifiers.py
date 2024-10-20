@@ -48,17 +48,19 @@ class NaiveBayesClassifier(BinaryClassifier):
     """
     def __init__(self):
         # Add your code here!
-        self.class_probs = np.array([])
-        self.wordFreqNegative = np.array([])
-        self.wordFreqPositive = np.array([])
+        self.class_probs = np.array([]) # P(Class)
+        self.wordFreqNegative = np.array([]) # Word Frequencies (negative)
+        self.wordFreqPositive = np.array([]) # Word Frequencies (positive)
         self.negativeConditionals = np.array([]) # P(token(i) | Negative)
         self.positiveConditionals = np.array([]) # P(token(i) | Positive)
 
     def fit(self, X, Y):
+        # First, convert our data to numpy arrays
         samples = np.array(X)
         labels = np.array(Y)
-        self.wordFreqNegative = np.ones(samples.shape[1])
+        self.wordFreqNegative = np.ones(samples.shape[1]) # now we know the shapes of our input data
         self.wordFreqPositive = np.ones(samples.shape[1])
+        # determine the number of classes:
         seen = set()
         total = 0
         numLabels = len(labels)
@@ -66,8 +68,7 @@ class NaiveBayesClassifier(BinaryClassifier):
             if labels[i] not in seen:   
                 total += 1
                 seen.add(labels[i])
-        self.class_probs = np.zeros(total)
-
+        self.class_probs = np.zeros(total) # initialize our array of class probabilities
         for i in range(len(labels)):
             self.class_probs[labels[i]] += 1
         for i in range(total):
@@ -75,29 +76,31 @@ class NaiveBayesClassifier(BinaryClassifier):
         num_samples = samples.shape[0]
         for i in range(num_samples):
             for j in range(samples.shape[1]):
+                # add our word frequencies from our training data
                 if labels[i] == 0:
-                    self.wordFreqNegative[j] += samples[i][j]
+                    self.wordFreqNegative[j] += samples[i][j] 
                 else:
                     self.wordFreqPositive[j] += samples[i][j]
         totalNeg = np.sum(self.wordFreqNegative)
         totalPos = np.sum(self.wordFreqPositive)
         self.negativeConditionals = np.zeros(samples.shape[1])
         self.positiveConditionals = np.zeros(samples.shape[1])
+        # Initialize and calculate our conditional probabilities P(word_i | class)
         for i in range(samples.shape[1]):
             self.negativeConditionals[i] = self.wordFreqNegative[i] / totalNeg
             self.positiveConditionals[i] = self.wordFreqPositive[i] / totalPos
     def predict(self, X):
+        # Convert our data to numpy arrays
         samples = np.array(X)
-        predLabels = np.zeros(samples.shape[0])
+        predLabels = np.zeros(samples.shape[0]) 
         for i in range(samples.shape[0]):
-            negProb = 0
-            posProb = 0
+            # Calculate the probability scores of each class
             positiveScore = np.log(self.class_probs[1])
             negativeScore = np.log(self.class_probs[0])
             for j in range(samples.shape[1]):
                 positiveScore += samples[i][j] * (np.log(self.positiveConditionals[j]))
                 negativeScore += samples[i][j] * (np.log(self.negativeConditionals[j]))
-            predLabels[i] = 1 if positiveScore > negativeScore else 0
+            predLabels[i] = 1 if positiveScore > negativeScore else 0 # determine the class with greater score
         return predLabels
 
 # TODO: Implement this
