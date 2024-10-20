@@ -112,24 +112,24 @@ class LogisticRegressionClassifier(BinaryClassifier):
         self.num_steps = num_steps
         self.weights = None
 
-    def sigmoid(self, z):
+    def sigmoid(self, z): 
         return 1 / (1 + np.exp(-z))
 
     def fit(self, X, Y):
         num_samples, num_features = X.shape
-        self.weights = np.zeros(num_features)
+        self.weights = np.zeros(num_features) # build our model params
 
         for step in range(self.num_steps):
             scores = np.dot(X, self.weights)
             predictions = self.sigmoid(scores)
-            error = Y - predictions
+            error = Y - predictions # derivative of crossentropy loss = Y - Y_pred
             gradient = np.dot(X.T, error)
-            self.weights += self.lr * gradient
+            self.weights += self.lr * gradient # update our weights based on our loss
 
     def predict(self, X):
         scores = np.dot(X, self.weights)
         probabilities = self.sigmoid(scores)
-        return (probabilities >= 0.5).astype(int)
+        return (probabilities >= 0.5).astype(int) # Return our model's classifications
 
 
 # you can change the following line to whichever classifier you want to use for
