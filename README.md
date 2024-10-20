@@ -1,4 +1,4 @@
-# Movie Review Sentiment Classification
+# Movie Review Sentiment Classification- Tanishq Patil, Manav Patel, <Group Member 3>, <Group Member 4>
 
 ## Classifiers
 
