@@ -104,19 +104,29 @@ class NaiveBayesClassifier(BinaryClassifier):
 class LogisticRegressionClassifier(BinaryClassifier):
     """Logistic Regression Classifier
     """
-    def __init__(self):
-        # Add your code here!
-        raise Exception("Must be implemented")
-        
+    def __init__(self, lr=0.01, num_steps=10000):
+        self.lr = lr
+        self.num_steps = num_steps
+        self.weights = None
+
+    def sigmoid(self, z):
+        return 1 / (1 + np.exp(-z))
 
     def fit(self, X, Y):
-        # Add your code here!
-        raise Exception("Must be implemented")
-        
-    
+        num_samples, num_features = X.shape
+        self.weights = np.zeros(num_features)
+
+        for step in range(self.num_steps):
+            scores = np.dot(X, self.weights)
+            predictions = self.sigmoid(scores)
+            error = Y - predictions
+            gradient = np.dot(X.T, error)
+            self.weights += self.lr * gradient
+
     def predict(self, X):
-        # Add your code here!
-        raise Exception("Must be implemented")
+        scores = np.dot(X, self.weights)
+        probabilities = self.sigmoid(scores)
+        return (probabilities >= 0.5).astype(int)
 
 
 # you can change the following line to whichever classifier you want to use for
