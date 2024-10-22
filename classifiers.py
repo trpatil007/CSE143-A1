@@ -113,7 +113,7 @@ class LogisticRegressionClassifier(BinaryClassifier):
         self.weights = None
 
     def sigmoid(self, z): 
-        z = np.clip(z, -88.72, 88.72)
+        z = np.clip(z, -88.72, 88.72) # drop precision to float32
         return 1 / (1 + np.exp(-z))
 
     def fit(self, X, Y):
