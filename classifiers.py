@@ -107,12 +107,13 @@ class NaiveBayesClassifier(BinaryClassifier):
 class LogisticRegressionClassifier(BinaryClassifier):
     """Logistic Regression Classifier
     """
-    def __init__(self, lr=0.01, num_steps=10000):
+    def __init__(self, lr=0.01, num_steps=1000):
         self.lr = lr
         self.num_steps = num_steps
         self.weights = None
 
     def sigmoid(self, z): 
+        z = np.clip(z, -88.72, 88.72)
         return 1 / (1 + np.exp(-z))
 
     def fit(self, X, Y):
@@ -129,7 +130,7 @@ class LogisticRegressionClassifier(BinaryClassifier):
     def predict(self, X):
         scores = np.dot(X, self.weights)
         probabilities = self.sigmoid(scores)
-        return (probabilities >= 0.5).astype(int) # Return our model's classifications
+        return (probabilities >= 0.5).astype(int) # Return the class with a larger probability score
 
 
 # you can change the following line to whichever classifier you want to use for
