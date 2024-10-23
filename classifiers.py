@@ -111,16 +111,15 @@ class LogisticRegressionClassifier(BinaryClassifier):
         self.lr = lr
         self.num_steps = num_steps
         self.weights = None
-        self.lam = 0.01 
+        self.lam = 0.01  # L2 penalty parameter
 
     def sigmoid(self, z): 
-        z = np.clip(z, -88.72, 88.72) # drop precision to float32
+        z = np.clip(z, -88.72, 88.72) # prevent overflow issue by clipping value to range
         return 1 / (1 + np.exp(-z))
 
     def fit(self, X, Y):
-        num_samples, num_features = X.shape
-        self.weights = np.zeros(num_features) # build our model params
-        for step in range(self.num_steps):
+        self.weights = np.zeros(X.shape[1]) # build our model params
+        for _ in range(self.num_steps):
             scores = np.dot(X, self.weights)
             predictions = self.sigmoid(scores)
             error = (Y - predictions) # derivative of crossentropy loss = Y - Y_pred
@@ -129,8 +128,14 @@ class LogisticRegressionClassifier(BinaryClassifier):
 
     def predict(self, X):
         scores = np.dot(X, self.weights)
-        probabilities = self.sigmoid(scores)
-        return (probabilities >= 0.5).astype(int) # Return the class with a larger probability score
+        probs = self.sigmoid(scores)
+        labels = []
+        for i in range(probs.shape[0]):
+            if (probs[i] >= 0.5): 
+                labels.append(1)
+            else:
+                labels.append(0)
+        return labels # Return the class with a larger probability score
 
 
 # you can change the following line to whichever classifier you want to use for
